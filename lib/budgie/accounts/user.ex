@@ -5,6 +5,8 @@ defmodule Budgie.Accounts.User do
   @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
+    field :first_name, :string
+    field :last_name, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
@@ -60,6 +62,13 @@ defmodule Budgie.Accounts.User do
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
     |> maybe_hash_password(opts)
+  end
+
+  defp validate_name(changeset) do
+    changeset
+    |> validate_required([:first_name, :last_name])
+    |> validate_length(:first_name, min: 2, max: 100)
+    |> validate_length(:last_name, min: 2, max: 100)
   end
 
   defp maybe_hash_password(changeset, opts) do
